@@ -1,3 +1,15 @@
+---
+title: Object Detection
+emoji: 🖼
+colorFrom: green
+colorTo: purple
+sdk: gradio
+sdk_version: 5.5.0
+app_file: app.py
+pinned: false
+short_description: Object detection via Gradio
+---
+
 # Object detection
 
 Aim: AI-driven object detection (on COCO image dataset)
