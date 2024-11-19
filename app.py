@@ -45,11 +45,11 @@ def get_output_figure(pil_img, results, threshold):
 
 
 #@spaces.GPU
-def detect(image):
+def detect(image, threshold=0.9):
     results = model_pipeline(image)
     print(results)
 
-    output_figure = get_output_figure(image, results, threshold=0.9)
+    output_figure = get_output_figure(image, results, threshold=threshold)
 
     buf = io.BytesIO()
     output_figure.savefig(buf, bbox_inches="tight")
@@ -71,9 +71,10 @@ with gr.Blocks() as demo:
 
     gr.Interface(
         fn=detect,
-        inputs=gr.Image(label="Input image", type="pil"),
+        inputs=[gr.Image(label="Input image", type="pil"), \
+                gr.Slider(0, 1.0, value=0.9, label='Threshold')],
         outputs=[gr.Image(label="Output prediction", type="pil")],
-        examples=['samples/savanna.jpg'],
+        examples=[['samples/savanna.jpg']],
     )
 
 demo.launch(show_error=True)
