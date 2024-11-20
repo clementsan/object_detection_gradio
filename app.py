@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import io
 import os
 
-list_models = ["facebook/detr-resnet-50"]
+list_models = ["facebook/detr-resnet-50", "facebook/detr-resnet-101", "hustvl/yolos-tiny", "hustvl/yolos-small"]
 list_models_simple = [os.path.basename(model) for model in list_models]
 
 COLORS = [
@@ -81,7 +81,7 @@ def demo():
 
         with gr.Row():
             model_id = gr.Radio(list_models, \
-                               label="Detection models", value=list_models[0], type="index", info="Choose your detection model")
+                               label="Detection models", value=list_models[3], type="index", info="Choose your detection model")
         with gr.Row():
             threshold = gr.Slider(0, 1.0, value=0.9, label='Detection threshold', info="Choose your detection threshold")
 
