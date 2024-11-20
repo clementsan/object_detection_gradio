@@ -3,7 +3,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 
 # Parameters
-Server_URL = "http://127.0.0.1:7860/"
+Server_URL = "cvachet/object_detection_gradio"
 Image_URL = 'http://images.cocodataset.org/val2017/000000039769.jpg'
 
 # URL to client server (e.g. local server, docker container or AWS ECS)
@@ -12,7 +12,9 @@ client = Client(Server_URL)
 # Call to API
 result = client.predict(
 		image=handle_file(Image_URL),
-		api_name="/predict"
+		model_id="hustvl/yolos-small",
+		threshold=0.9,
+		api_name="/detect"
 )
 
 # Result is an image.webp file
