@@ -8,9 +8,10 @@ from PIL import Image
 from transformers import pipeline
 import matplotlib.pyplot as plt
 import io
+import os
 
-model_pipeline = pipeline(model="facebook/detr-resnet-50")
-
+list_models = ["facebook/detr-resnet-50"]
+list_models_simple = [os.path.basename(model) for model in list_models]
 
 COLORS = [
     [0.000, 0.447, 0.741],
@@ -20,6 +21,11 @@ COLORS = [
     [0.466, 0.674, 0.188],
     [0.301, 0.745, 0.933],
 ]
+
+
+def load_pipeline(model):
+    model_pipeline = pipeline(model=model)
+    return model_pipeline
 
 
 def get_output_figure(pil_img, results, threshold):
@@ -45,7 +51,10 @@ def get_output_figure(pil_img, results, threshold):
 
 
 #@spaces.GPU
-def detect(image, threshold=0.9):
+def detect(image, model_id, threshold=0.9):
+    print("model:", list_models[model_id])
+
+    model_pipeline = load_pipeline(list_models[model_id])
     results = model_pipeline(image)
     print(results)
 
@@ -59,22 +68,40 @@ def detect(image, threshold=0.9):
     return output_pil_img
 
 
-with gr.Blocks() as demo:
-    gr.Markdown("# Object detection with DETR on COCO dataset")
-    gr.Markdown(
-        """
-        This application uses a DETR (DEtection TRansformers) model to detect objects on images.
-        This version was trained using the COCO dataset.
-        You can load an image and see the predictions for the objects detected.
-        """
-    )
+def demo():
+    with gr.Blocks(theme="base") as demo:
+        gr.Markdown("# Object detection on COCO dataset")
+        gr.Markdown(
+            """
+            This application uses transformer-based models to detect objects on images.
+            This version was trained using the COCO dataset.
+            You can load an image and see the predictions for the objects detected.
+            """
+        )
 
-    gr.Interface(
-        fn=detect,
-        inputs=[gr.Image(label="Input image", type="pil"), \
-                gr.Slider(0, 1.0, value=0.9, label='Threshold')],
-        outputs=[gr.Image(label="Output prediction", type="pil")],
-        examples=[['samples/savanna.jpg']],
-    )
+        with gr.Row():
+            model_id = gr.Radio(list_models, \
+                               label="Detection models", value=list_models[0], type="index", info="Choose your detection model")
+        with gr.Row():
+            threshold = gr.Slider(0, 1.0, value=0.9, label='Detection threshold', info="Choose your detection threshold")
 
-demo.launch(show_error=True)
+        with gr.Row():
+            input_image = gr.Image(label="Input image", type="pil")
+            output_image = gr.Image(label="Output image", type="pil")
+
+        with gr.Row():
+            submit_btn = gr.Button("Submit")
+            clear_button = gr.ClearButton()
+
+        gr.Examples(['samples/savanna.jpg'], inputs=input_image)
+
+        submit_btn.click(fn=detect, inputs=[input_image, model_id, threshold], outputs=[output_image])
+        clear_button.click(lambda: [None, None], \
+                        inputs=None, \
+                        outputs=[input_image, output_image], \
+                        queue=False)
+
+    demo.queue().launch(debug=True)
+
+if __name__ == "__main__":
+    demo()
