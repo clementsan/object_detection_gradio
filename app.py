@@ -93,7 +93,7 @@ def demo():
             submit_btn = gr.Button("Submit")
             clear_button = gr.ClearButton()
 
-        gr.Examples(['samples/savanna.jpg'], inputs=input_image)
+        gr.Examples(['samples/savanna.jpg', 'samples/boats.jpg'], inputs=input_image)
 
         submit_btn.click(fn=detect, inputs=[input_image, model_id, threshold], outputs=[output_image])
         clear_button.click(lambda: [None, None], \
