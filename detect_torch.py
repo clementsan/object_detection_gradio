@@ -95,7 +95,7 @@ def detect(im, model, transform):
 
 def load_model():
     model = torch.hub.load('facebookresearch/detr', 'detr_resnet50', pretrained=True)
-    model.eval();
+    model.eval()
     return model
 
 def main():
